@@ -3,11 +3,22 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import fs from 'fs/promises'
+import { createServer } from 'node:http'
+import { Server } from 'socket.io'
 
 dotenv.config()
 
 const app = express()
 const port = process.env.PORT
+const server = createServer(app)
+const io = new Server(server, {
+    path: '/websocket/',
+    cors: {
+        origin: process.env.FRONTEND_URL,
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
+})
 
 app.use(
     cors({
@@ -37,7 +48,19 @@ async function loadControllers() {
 (async () => {
     await loadControllers();
 
-    app.listen(port, () => {
+    io.on('connection', (socket) => {
+        console.log("a client connected")
+
+        socket.on('games', (data) => {
+            console.log('games event received:', data)
+        })
+
+        socket.on('disconnect', () => {
+            console.log('client disconnected')
+        })
+    })
+
+    server.listen(port, () => {
         console.log(`Server running... on port: ${port}`);
     });
 })();

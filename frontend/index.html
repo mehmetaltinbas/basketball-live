@@ -6,13 +6,45 @@
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
+<body class="w-full h-full">
     
-    <div>is this live?</div>
-    <input id="input" class="border-1 rounded-[5px]"/>
-    <button id="button">send</button>
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">NBA Games</h1>
+        
+        <!-- live games -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <h2 class="text-2xl font-semibold text-gray-700">Live Games</h2>
+                <span class="animate-pulse h-3 w-3 bg-red-500 rounded-full"></span>
+            </div>
+            <div id="live-games" class="grid gap-4">
+                <!-- Live games will be inserted here -->
+            </div>
+            <p id="no-live-games" class="text-gray-500 text-center py-8 hidden">No live games at the moment</p>
+        </div>
+
+        <!-- scheduled games -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Scheduled Games</h2>
+            <div id="scheduled-games" class="grid gap-4">
+                <!-- Scheduled games will be inserted here -->
+            </div>
+            <p id="no-scheduled-games" class="text-gray-500 text-center py-8 hidden">No scheduled games</p>
+        </div>
+
+        <!-- finished games -->
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Finished Games</h2>
+            <div id="finished-games" class="grid gap-4">
+                <!-- Finished games will be inserted here -->
+            </div>
+            <p id="no-finished-games" class="text-gray-500 text-center py-8 hidden">No finished games</p>
+        </div>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-    <script src="./app.js"></script>
+    <script type="module" src="update-games.js"></script>
+    <script type="module" src="create-game-card.js"></script>
+    <script type="module" src="format-time.js"></script>
+    <script type="module" src="./app.js"></script>
 </body>
 </html>

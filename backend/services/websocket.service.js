@@ -1,22 +1,28 @@
 import { GameStatus } from '../constants/game-status.constant.js';
 import { gamesService } from './games.service.js';
 
-export function startPolling(io) {
-    let delay = 20 * 60 * 1000;
-    setInterval(async () => {
+function startPollingGames(io) {
+    async function poll() {
+        console.log("polling...");
         const date = new Date();
-        const response = await gamesService.fetchGames(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+        const response = await gamesService.fetchGames(
+            `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+        );
 
-        for (const game of response.response) {
-            if (game.status.long === GameStatus.LIVE) {
-                delay = 1 * 60 * 1000;
-                break
-            } else {
-                delay = 20 * 60 * 1000;
-                continue
-            }
-        }
+        const hasLiveGames = response.response.some(
+            game => game.status.long === GameStatus.LIVE || game.status.long === GameStatus.IN_PLAY, 
+        );
 
-        io.emit('games', response.response)
-    }, delay)
+        const delay = hasLiveGames ? 1 * 60 * 1000 : 20 * 60 * 1000;
+        
+        io.emit('games', response);
+        
+        setTimeout(poll, delay); // Recursive call with dynamic delay
+    }
+
+    poll(); // Start immediately
+}
+
+export const websocketService = {
+    startPollingGames
 }

@@ -5,6 +5,8 @@ import express from 'express'
 import fs from 'fs/promises'
 import { createServer } from 'node:http'
 import { Server } from 'socket.io'
+import { dummyData } from './dummy-data.js'
+import { websocketService } from './services/websocket.service.js'
 
 dotenv.config()
 
@@ -51,9 +53,7 @@ async function loadControllers() {
     io.on('connection', (socket) => {
         console.log("a client connected")
 
-        socket.on('games', (data) => {
-            console.log('games event received:', data)
-        })
+        io.emit('games', dummyData)
 
         socket.on('disconnect', () => {
             console.log('client disconnected')
@@ -63,4 +63,9 @@ async function loadControllers() {
     server.listen(port, () => {
         console.log(`Server running... on port: ${port}`);
     });
+
+    await new Promise(resolve => setTimeout(resolve, 5 * 1000))
+
+    websocketService.startPollingGames(io)
+
 })();
